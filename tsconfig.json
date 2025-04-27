@@ -6,10 +6,9 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
@@ -23,7 +22,6 @@
     "src"
   ],
   "exclude": [
-    "electron",
     "vite.config.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

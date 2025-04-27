@@ -40,14 +40,22 @@
   "build": {
     "appId": "com.iotconnect.app",
     "productName": "IoT Connect",
+    "win": {
+      "target": "nsis",        
+      "icon": "assets/images/icon.png",
+      "files": [
+        "dist/**/*",  
+        "assets/**/*",
+        "electron/**/*"
+      ]
+    },
     "mac": {
       "category": "public.app-category.utilities"
-    },
-    "win": {
-      "target": "nsis"
     },
     "linux": {
       "target": "AppImage"
     }
   }
+
 }
+
