@@ -68,7 +68,7 @@ const MQTTViewer: React.FC<MQTTViewerProps> = ({ connection }) => {
           ...jsonMessage,
           arrivalTime: format(new Date(), 'dd-MM-yyyy HH:mm:ss'),
         };
-        setMessages(prev => [newMessage, ...prev.slice(0, 10)]);
+        setMessages(prev => [newMessage, ...prev]);
         console.log("📡 Received MQTT message:", jsonMessage);
       } catch (error) {
         console.error("Error processing message:", error);
@@ -102,6 +102,7 @@ const MQTTViewer: React.FC<MQTTViewerProps> = ({ connection }) => {
   };
 
   const downloadJSON = () => {
+    console.log("Messages to download:", messages.length); //
     const dataStr = JSON.stringify(messages, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -127,6 +128,43 @@ const MQTTViewer: React.FC<MQTTViewerProps> = ({ connection }) => {
     a.download = 'mqtt-messages.txt';
     a.click();
   };
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+  
+    const token = localStorage.getItem('auth_token'); // Get the token from localStorage
+    if (!token) {
+      alert("You must be logged in to upload files.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      const response = await fetch("http://127.0.0.1:5001/services/IotConnect/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Upload successful:", result);
+        alert("Upload successful!");
+      } else {
+        console.error("Upload failed:", response.statusText);
+        alert("Upload failed!");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload error!");
+    }
+  };
+  
+  
 
   useEffect(() => {
     return () => {
@@ -182,7 +220,7 @@ const MQTTViewer: React.FC<MQTTViewerProps> = ({ connection }) => {
           <label className="px-4 py-2 bg-purple-500 text-white rounded flex items-center cursor-pointer">
             <Upload size={16} />
             <span className="ml-2">Upload</span>
-            <input type="file" className="hidden" />
+            <input type="file" className="hidden" onChange={handleUpload} />
           </label>
         </div>
       </div>
